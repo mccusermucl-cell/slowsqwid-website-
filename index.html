@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>slowsqwid optimizations</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: radial-gradient(circle at top, #111, #000);
+  color:white;
+  overflow-x:hidden;
+}
+
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 40px;
+  border-bottom:1px solid #222;
+  backdrop-filter: blur(8px);
+}
+
+header span { color:#6da9ff; font-weight:600; }
+
+nav a {
+  margin-left:20px;
+  color:#bbb;
+  transition:color .2s;
+}
+nav a:hover { color:white; }
+
+.page {
+  display:none;
+  opacity:0;
+  transform: translateY(20px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+.page.active {
+  display:block;
+  opacity:1;
+  transform: translateY(0);
+}
+
+.section {
+  padding:90px 20px;
+  text-align:center;
+}
+
+.hero h1 {
+  font-size:56px;
+  margin-bottom:10px;
+}
+.hero p {
+  color:#aaa;
+  font-size:18px;
+  max-width:650px;
+  margin:0 auto 40px;
+}
+
+.btn {
+  padding:16px 48px;
+  border-radius:10px;
+  font-weight:600;
+  background:linear-gradient(90deg,#6da9ff,#9f6dff);
+  box-shadow:0 0 25px rgba(109,169,255,.45);
+  transition:transform .2s, box-shadow .2s;
+  display:inline-block;
+}
+.btn:hover {
+  transform:scale(1.06);
+  box-shadow:0 0 35px rgba(159,109,255,.8);
+}
+
+.card-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:30px;
+  max-width:1100px;
+  margin:auto;
+}
+
+.card {
+  background:#0e0e0e;
+  border:1px solid #222;
+  border-radius:16px;
+  padding:35px;
+  transition:transform .25s, border .25s;
+}
+.card:hover {
+  transform:translateY(-6px);
+  border-color:#6da9ff;
+}
+
+.card h3 {
+  color:#6da9ff;
+}
+
+.fps-bar {
+  height:14px;
+  border-radius:10px;
+  margin:8px 0;
+}
+.red { background:#ff4d4d; }
+.green { background:#4dff88; }
+
+footer {
+  border-top:1px solid #222;
+  padding:30px;
+  text-align:center;
+  color:#555;
+}
+
+input {
+  padding:12px;
+  border-radius:8px;
+  border:none;
+  width:240px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div>Owned by <span>slowsqwid</span></div>
+  <nav>
+    <a onclick="showPage('home')">Home</a>
+    <a onclick="showPage('account')">Account</a>
+    <a onclick="showPage('trusted')">Trusted</a>
+  </nav>
+</header>
+
+<!-- HOME -->
+<div id="home" class="page active">
+  <div class="section hero">
+    <h1>slowsqwid optimizations</h1>
+    <p>High-performance FPS & latency optimization utilities designed for competitive gaming.</p>
+    <a class="btn" onclick="showPage('plans')">Download</a>
+  </div>
+
+  <div class="section">
+    <div class="card-grid">
+
+      <div class="card">
+        <h3>24/7 Delivery</h3>
+        <p>Instant access through Discord at any time. No waiting, no delays.</p>
+      </div>
+
+      <div class="card">
+        <h3>Built for Competitive Play</h3>
+        <p>Optimizations focused on consistency, input latency, and high refresh gameplay.</p>
+      </div>
+
+      <div class="card">
+        <h3>Trusted Optimization</h3>
+        <p>Used by over 1000 gamers across Fortnite, Minecraft, Rocket League, and Roblox.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>FPS Before vs After</h2>
+    <div class="card-grid">
+
+      <div class="card">
+        <h3>Fortnite</h3>
+        Before: 120 FPS
+        <div class="fps-bar red" style="width:40%"></div>
+        After: 370 FPS
+        <div class="fps-bar green" style="width:80%"></div>
+      </div>
+
+      <div class="card">
+        <h3>Minecraft</h3>
+        Before: 90 FPS
+        <div class="fps-bar red" style="width:30%"></div>
+        After: 400 FPS
+        <div class="fps-bar green" style="width:90%"></div>
+      </div>
+
+      <div class="card">
+        <h3>Rocket League</h3>
+        Before: 140 FPS
+        <div class="fps-bar red" style="width:45%"></div>
+        After: 380 FPS
+        <div class="fps-bar green" style="width:100%"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ACCOUNT -->
+<div id="account" class="page">
+  <div class="section">
+    <h2>Account Login</h2>
+    <p>Access your optimization dashboard</p>
+
+    <input id="email" placeholder="Email"><br><br>
+    <input id="password" type="password" placeholder="Password"><br><br>
+
+    <a class="btn" onclick="login()">Login / Register</a>
+
+    <p style="margin:20px 0;color:#777;">or</p>
+
+    <a class="btn" href="https://accounts.google.com/o/oauth2/v2/auth" target="_blank">
+      Login with Google
+    </a><br><br>
+
+    <a class="btn" href="https://discord.com/oauth2/authorize" target="_blank">
+      Login with Discord
+    </a>
+
+    <p id="status"></p>
+  </div>
+</div>
+
+<!-- PLANS -->
+<div id="plans" class="page">
+  <div class="section">
+    <h2>Choose Your Plan</h2>
+    <div class="card-grid">
+
+      <div class="card">
+        <h3>FREE</h3>
+        <p>Basic performance tweaks</p>
+        <p>$0.00</p>
+        <a class="btn" href="https://discord.gg/NF84E4Pg" target="_blank">Join Discord</a>
+      </div>
+
+      <div class="card">
+        <h3>STANDARD</h3>
+        <p>Advanced optimizations</p>
+        <p>$2.99</p>
+        <a class="btn" href="https://discord.gg/NF84E4Pg" target="_blank">Pay in Discord</a>
+      </div>
+
+      <div class="card">
+        <h3>ULTIMATE</h3>
+        <p>All tweaks + custom power plans</p>
+        <p>$10.99</p>
+        <a class="btn" href="https://discord.gg/NF84E4Pg" target="_blank">Checkout</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TRUSTED -->
+<div id="trusted" class="page">
+  <div class="section">
+    <h1>Trusted by 1000+ People</h1>
+    <p>Helping gamers optimize performance worldwide</p>
+  </div>
+</div>
+
+<footer>
+© 2026 slowsqwid optimizations
+</footer>
+
+<script>
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function login(){
+  let u=document.getElementById('user').value;
+  if(!u) return;
+  localStorage.setItem('slowsqwid_user',u);
+  document.getElementById('status').innerText="Logged in as "+u;
+}
+</script>
+
+<script>
+function login(){
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
+
+  if(!email || !pass){
+    alert("Enter email and password");
+    return;
+  }
+
+  localStorage.setItem("slowsqwid_account", email);
+  document.getElementById("status").innerText =
+    "Logged in as " + email;
+}
+</script>
+
+</body>
+</html>
